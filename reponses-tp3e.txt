@@ -1,0 +1,116 @@
+TP Module 3 — Réponses (XPath, XSLT, CSS)
+Nom : ___Adama Kane_______________________    Matricule : _13_________________________
+
+ÉTAPE 1 — Lire l'arbre
+
+1. count(//etudiant) = 12
+
+2. count(//note) = 34
+
+3. count(//etudiant[email]) = 9
+
+Pourquoi count(//etudiant[email]) ne vaut-il pas count(//etudiant) ?
+
+Parce que seuls les étudiants qui possèdent un élément <email> sont comptés.
+Trois étudiants n'ont pas d'email : ISEP26-002, ISEP26-006 et ISEP26-012.
+
+
+ÉTAPE 2 — Interroger avec XPath
+
+2a. Noms des étudiants de la classe L1-B :
+
+//etudiant[@classe='L1-B']/nom
+
+Résultats : Ba, Gueye, Faye, Cissé, Diouf, Kane.
+
+
+2b. Matricules des étudiants sans email :
+
+//etudiant[not(email)]/@matricule
+
+Résultats : ISEP26-002, ISEP26-006, ISEP26-012.
+
+
+2c. Note de XPath de l'étudiant ISEP26-007 :
+
+//etudiant[@matricule='ISEP26-007']/notes/note[@matiere='XPath']
+
+Résultat : 16.
+
+
+2d. Nombre d'étudiants qui ont moins de trois notes :
+
+count(//etudiant[count(notes/note) < 3])
+
+Résultat : 3 (ISEP26-006, ISEP26-009 et ISEP26-012).
+
+
+2e. Moyenne de la promotion en XML :
+
+sum(//note[@matiere='XML']) div count(//note[@matiere='XML'])
+
+Résultat : 11.875.
+
+
+2f. Nombre d'étudiants qui ont une moyenne d'au moins 10 :
+
+count(//etudiant[sum(notes/note) div count(notes/note) >= 10])
+
+Résultat : 9.
+
+La moyenne de chaque étudiant est calculée avec toutes ses notes disponibles.
+
+
+2g. Matricules des étudiants dont la note de XSD dépasse 15 :
+
+//etudiant[notes/note[@matiere='XSD' and . > 15]]/@matricule
+
+Résultats : ISEP26-001 et ISEP26-011.
+
+
+2h. Prénom du dernier étudiant de L1-A :
+
+//etudiant[@classe='L1-A'][last()]/prenom
+
+Résultat : Ndèye.
+
+L'expression proposée //etudiant[last()][@classe='L1-A']/prenom
+sélectionne d'abord le dernier étudiant parmi tous les enfants etudiant de promotion.
+C'est ISEP26-012, de classe L1-B. Le filtre L1-A échoue donc et l'expression ne renvoie aucun résultat.
+
+
+ÉTAPE 3 — Première feuille liste.xsl
+
+Le fichier liste.xsl produit une liste HTML avec un élément <li> par étudiant,
+au format « Prénom Nom ».
+
+Déroulé des deux premiers étudiants :
+
+<ul>
+  <li>Fatou Sow</li>
+  <li>Moussa Diallo</li>
+  ...
+</ul>
+
+
+ÉTAPES 4 À 8 — tableau.xsl
+
+Le fichier tableau.xsl contient :
+
+- Une page HTML complète liée à style.css.
+- Le tableau des étudiants avec matricule, nom, prénom, classe, email,
+  moyenne et résultat.
+- L'affichage « non renseigné » quand l'email manque.
+- Le paramètre seuil fixé à 10.
+- Le tri par moyenne décroissante et le rang.
+- Les quatre chiffres clés.
+- Un tableau distinct par classe, avec un rang qui recommence à 1.
+
+
+ÉTAPE 9 — BONUS
+
+La classe major est ajoutée à la première ligne de chaque tableau avec xsl:attribute.
+
+xsl:attribute doit être placé avant les éléments enfants de l'élément concerné.
+Placé après un élément enfant, il peut provoquer une erreur XSLT car les attributs
+doivent être créés avant le contenu de l'élément.
